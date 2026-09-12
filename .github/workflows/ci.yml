@@ -1,0 +1,92 @@
+name: Innly CI
+
+'on':
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/innly_ci
+      FIREBASE_PROJECT_ID: innly-ci-synthetic
+      FIREBASE_SERVICE_ACCOUNT_PATH: ${{ runner.temp }}/synthetic-service-account.json
+      RAZORPAY_KEY_ID: rzp_test_placeholder
+      RAZORPAY_KEY_SECRET: placeholder_secret_ci_synthetic
+      RAZORPAY_WEBHOOK_ENABLED: "false"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Generate temporary synthetic Firebase credentials
+        run: |
+          node -e '
+          const fs = require("fs");
+          const crypto = require("crypto");
+          const { privateKey } = crypto.generateKeyPairSync("rsa", {
+            modulusLength: 2048,
+            publicKeyEncoding: { type: "spki", format: "pem" },
+            privateKeyEncoding: { type: "pkcs8", format: "pem" }
+          });
+          const syntheticJson = {
+            type: "service_account",
+            project_id: "innly-ci-synthetic",
+            private_key_id: "synthetic-key-id-0000000000000000",
+            private_key: privateKey,
+            client_email: "firebase-adminsdk-synthetic@innly-ci-synthetic.iam.gserviceaccount.com",
+            client_id: "000000000000000000000",
+            auth_uri: "https://accounts.google.com/o/oauth2/auth",
+            token_uri: "https://oauth2.googleapis.com/token",
+            auth_provider_x509_cert_url: "https://www.googleapis.com/oauth2/v1/certs",
+            client_x509_cert_url: "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-synthetic%40innly-ci-synthetic.iam.gserviceaccount.com"
+          };
+          fs.writeFileSync(process.env.FIREBASE_SERVICE_ACCOUNT_PATH, JSON.stringify(syntheticJson, null, 2));
+          '
+
+      - name: Install backend dependencies
+        run: npm ci
+
+      - name: Run backend test suite
+        run: npm test
+
+  android-jvm:
+    name: Android JVM Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@748248ddd2a24f49513d8f472f81c3a07d4d50e1 # v4.4.4
+
+      - name: Prepare runner-only debug Firebase configuration
+        run: cp app/src/debug/google-services.json.example app/src/debug/google-services.json
+
+      - name: Run Android JVM unit tests
+        run: ./gradlew testDebugUnitTest --no-daemon

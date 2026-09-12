@@ -1,0 +1,52 @@
+# Operating System & IDE
+.DS_Store
+*.iml
+.idea/
+.gradle/
+.cxx/
+**/.cxx/
+captures/
+**/captures/
+
+# Build & Dependency Artifacts
+/build/
+**/build/
+android/.kotlin/
+node_modules/
+coverage/
+dist/
+backend/tmp/
+
+# Logs
+*.log
+logs/
+**/logs/
+
+# Local Android Configuration & Keystores
+local.properties
+**/local.properties
+*.jks
+*.keystore
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment Variables & Secrets
+.env
+.env.*
+!.env.example
+!**/.env.example
+
+# Firebase & Cloud Credentials
+**/google-services.json
+!**/google-services.json.example
+backend/firebase-service-account.json
+**/*service-account*.json
+
+# Root Scratch Media / Screenshots
+/*.png
+
+# Local Backups
+*.backup*

@@ -1,0 +1,31 @@
+{
+  "name": "innly-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "check": "node --check src/server.js",
+    "test": "node --test tests/*.test.js",
+    "migrate": "node src/utils/migrate.js",
+    "migrate:dry": "node src/utils/migrate.js --dry-run",
+    "migrate:baseline": "node src/utils/migrate.js --baseline",
+    "rehearse:db": "node scripts/rehearseDatabaseInitialization.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^8.6.2",
+    "firebase-admin": "^13.0.2",
+    "helmet": "^8.0.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.1",
+    "razorpay": "^2.9.4",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
