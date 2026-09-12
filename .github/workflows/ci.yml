@@ -18,7 +18,6 @@ jobs:
       NODE_ENV: test
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/innly_ci
       FIREBASE_PROJECT_ID: innly-ci-synthetic
-      FIREBASE_SERVICE_ACCOUNT_PATH: ${{ runner.temp }}/synthetic-service-account.json
       RAZORPAY_KEY_ID: rzp_test_placeholder
       RAZORPAY_KEY_SECRET: placeholder_secret_ci_synthetic
       RAZORPAY_WEBHOOK_ENABLED: "false"
@@ -35,6 +34,8 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Generate temporary synthetic Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT_PATH: ${{ runner.temp }}/synthetic-service-account.json
         run: |
           node -e '
           const fs = require("fs");
@@ -63,6 +64,8 @@ jobs:
         run: npm ci
 
       - name: Run backend test suite
+        env:
+          FIREBASE_SERVICE_ACCOUNT_PATH: ${{ runner.temp }}/synthetic-service-account.json
         run: npm test
 
   android-jvm:
