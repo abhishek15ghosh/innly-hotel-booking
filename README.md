@@ -1,5 +1,7 @@
 # Innly — Modern Hotel Booking Platform
 
+[![Innly CI](https://github.com/abhishek15ghosh/innly-hotel-booking/actions/workflows/ci.yml/badge.svg)](https://github.com/abhishek15ghosh/innly-hotel-booking/actions/workflows/ci.yml)
+
 Innly is a full-stack, mobile-first hotel discovery and booking application engineered with **Kotlin**, **Jetpack Compose**, **Node.js**, **Express**, and **PostgreSQL**. Built as an engineering showcase, it models a real-world booking platform featuring multi-criteria hotel search, dynamic room availability checks, concurrency-safe inventory reservations, Firebase user authentication, and Razorpay payment capture with automated refund reconciliation.
 
 ---
